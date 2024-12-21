@@ -1,0 +1,87 @@
+import time
+import matplotlib.pyplot as plt
+from prettytable import PrettyTable
+
+# Fungsi Rekursif: Menambahkan janji temu ke dalam daftar
+def tambah_janji_temu_rekursif(daftar, indeks, nama, waktu, layanan):
+    if indeks == len(daftar):  # Jika mencapai akhir daftar
+        daftar.append({"Nama": nama, "Waktu": waktu, "Layanan": layanan})
+        return daftar
+    return tambah_janji_temu_rekursif(daftar, indeks + 1, nama, waktu, layanan)
+
+# Fungsi Iteratif: Menambahkan janji temu ke dalam daftar
+def tambah_janji_temu_iteratif(daftar, nama, waktu, layanan):
+    daftar.append({"Nama": nama, "Waktu": waktu, "Layanan": layanan})
+    return daftar
+
+# List untuk menyimpan data waktu eksekusi
+
+n_values = []
+rekursif_times = []
+iteratif_times = []
+
+# Fungsi untuk memperbarui grafik
+def perbarui_grafik():
+    plt.figure(figsize=(8, 6))
+    plt.plot(n_values, rekursif_times, label='Rekursif', marker='o', linestyle='-')
+    plt.plot(n_values, iteratif_times, label='Iteratif', marker='o', linestyle='-')
+    plt.title('Perbandingan Waktu Eksekusi: Rekursif vs Iteratif')
+    plt.xlabel('Jumlah Janji Temu (n)')
+    plt.ylabel('Waktu Eksekusi (detik)')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+# Fungsi untuk mencetak tabel waktu eksekusi
+def cetak_tabel_waktu():
+    tabel = PrettyTable()
+    tabel.field_names = ["n", "Waktu Rekursif (s)", "Waktu Iteratif (s)"]
+    for i in range(len(n_values)):
+        tabel.add_row([n_values[i], rekursif_times[i], iteratif_times[i]])
+    print(tabel)
+
+# Program utama
+while True:
+    try:
+        # Input jumlah janji temu
+        n = int(input("\nMasukkan jumlah janji temu (atau ketik -1 untuk keluar): "))
+        if n == -1:
+            print("Program selesai. Terima kasih!")
+            break
+        if n < 1:
+            print("Masukkan jumlah janji temu yang positif!")
+            continue
+
+        n_values.append(n)
+
+        # Data janji temu
+        daftar_rekursif = []
+        daftar_iteratif = []
+
+        # Mengukur waktu eksekusi pendekatan rekursif
+        mulai_waktu = time.time()
+        for i in range(n):
+            nama = f"Pelanggan-{i+1}"
+            waktu = f"{10+i}:00"
+            layanan = f"Layanan-{i+1}"
+            tambah_janji_temu_rekursif(daftar_rekursif, 0, nama, waktu, layanan)
+        rekursif_times.append(time.time() - mulai_waktu)
+
+        # Mengukur waktu eksekusi pendekatan iteratif
+        mulai_waktu = time.time()
+        for i in range(n):
+            nama = f"Pelanggan-{i+1}"
+            waktu = f"{10+i}:00"
+            layanan = f"Layanan-{i+1}"
+            tambah_janji_temu_iteratif(daftar_iteratif, nama, waktu, layanan)
+        iteratif_times.append(time.time() - mulai_waktu)
+
+        # Cetak tabel waktu eksekusi
+        print("\nTabel Waktu Eksekusi:")
+        cetak_tabel_waktu()
+
+        # Perbarui grafik
+        perbarui_grafik()
+
+    except ValueError:
+        print("Masukkan angka yang valid!")
